@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A simple mindfulness web app to promote relaxation and well-being.">
+    <meta name="keywords" content="Mindfulness, Meditation, Yoga, Relaxation, Wellness">
+    <meta name="author" content="Mindfulness App Developer">
+    <title>Mindfulness App</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mindfulness & Affirmations</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            min-height: 100vh;
+            padding: 1rem;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            padding-bottom: 2rem;
+        }
+
+        .card {
+            background: linear-gradient(145deg, #2a2a2a, #333333);
+            padding: 1.5rem;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 0.5rem;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, #3498db, #2ecc71);
+        }
+
+        .date-display {
+            color: #888;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 1rem;
+        }
+
+        h1, h2 {
+            color: #ffffff;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            font-size: 1.3rem;
+        }
+
+        .affirmation-text {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #e0e0e0;
+            margin-bottom: 1rem;
+            position: relative;
+            padding-left: 1rem;
+            border-left: 2px solid rgba(52, 152, 219, 0.5);
+        }
+
+        .play-button {
+            padding: 0.75rem 1rem;
+            background: linear-gradient(45deg, #3498db, #2ecc71);
+            color: #ffffff;
+            font-size: 0.85rem;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s;
+            width: 44px;
+            height: 44px;
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-weight: 600;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            touch-action: manipulation;
+        }
+
+        .play-button:active {
+            transform: scale(0.95);
+        }
+
+        .play-button-icon {
+            font-size: 1.2rem;
+        }
+
+        .breathing-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .breathing-button {
+            padding: 0.75rem 0.5rem;
+            border: none;
+            background: rgba(52, 152, 219, 0.2);
+            color: white;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(52, 152, 219, 0.3);
+            border-radius: 8px;
+            font-size: 0.85rem;
+            min-height: 44px;
+            touch-action: manipulation;
+        }
+
+        .breathing-button:active {
+            background: rgba(52, 152, 219, 0.4);
+            transform: scale(0.98);
+        }
+
+        .breathing-circle {
+            width: 120px;
+            height: 120px;
+            border: 6px solid #3498db;
+            border-radius: 50%;
+            margin: 1.5rem auto;
+            animation: none;
+            background: rgba(52, 152, 219, 0.1);
+        }
+
+        .breathing-active {
+            animation: breathe 4s infinite ease-in-out;
+        }
+
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        .timer-display {
+            text-align: center;
+            font-size: 2rem;
+            margin: 1rem 0;
+            color: #ffffff;
+            font-weight: 300;
+            letter-spacing: 2px;
+        }
+
+        .progress-bar {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            margin: 1rem 0;
+            position: relative;
+            border-radius: 2px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3498db, #2ecc71);
+            width: 0%;
+            transition: width 1s linear;
+            border-radius: 2px;
+        }
+
+        .quote-content {
+            font-style: italic;
+            color: #e0e0e0;
+            text-align: left;
+            line-height: 1.6;
+            font-size: 1rem;
+            margin: 1.5rem 0;
+            position: relative;
+            padding-left: 2rem;
+            min-height: 60px;
+        }
+
+        .quote-content::before {
+            content: '"';
+            position: absolute;
+            left: 0;
+            top: -8px;
+            font-size: 2.5rem;
+            color: rgba(52, 152, 219, 0.5);
+        }
+
+        .quote-author {
+            text-align: right;
+            color: #888;
+            font-size: 0.85rem;
+            margin-top: 1rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .button {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            background: linear-gradient(45deg, #3498db, #2ecc71);
+            color: white;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+            border-radius: 8px;
+            min-height: 44px;
+            touch-action: manipulation;
+        }
+
+        .button:active {
+            transform: scale(0.98);
+            background: linear-gradient(45deg, #2ecc71, #3498db);
+        }
+
+        .session-summary {
+            text-align: center;
+            margin-top: 1rem;
+            color: #888;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+        }
+
+        @media (min-width: 768px) {
+            .container {
+                max-width: 1000px;
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Affirmation Card -->
+        <div class="card">
+            <div id="currentDate" class="date-display"></div>
+            <h1>Daily Affirmation</h1>
+            <p id="affirmationText" class="affirmation-text">
+                As I close my eyes and breathe calmly, I feel peaceful inside. With each breath, I feel more sure of myself and fearless.
+                I believe in my abilities and know I can handle any challenges that come my way. I spread happiness and love wherever I go.
+                I am strong, and I can bounce back from anything tough.
+            </p>
+            <!-- Play Button for Text-to-Speech -->
+            <button class="play-button" onclick="playAffirmation()">
+                <span class="play-button-icon">▶</span>
+            </button>
+        </div>
+
+        <!-- Breathing Card -->
+        <div class="card">
+            <h2>Stress Relief</h2>
+            <div class="breathing-options">
+                <button class="breathing-button" onclick="startBreathing(60)">1 MIN<br>QUICK</button>
+                <button class="breathing-button" onclick="startBreathing(180)">3 MIN<br>CALM</button>
+                <button class="breathing-button" onclick="startBreathing(300)">5 MIN<br>DEEP</button>
+            </div>
+            <div id="breathingCircle" class="breathing-circle"></div>
+            <div id="timerDisplay" class="timer-display">01:00</div>
+            <div id="progressBar" class="progress-bar">
+                <div id="progressFill" class="progress-fill"></div>
+            </div>
+            <div id="sessionSummary" class="session-summary">
+                Select a breathing exercise to begin
+            </div>
+        </div>
+
+        <!-- Quote Card -->
+        <div class="card">
+            <h2>Daily Inspiration</h2>
+            <div id="quoteContainer">
+                <div id="quoteText" class="quote-content">Loading your inspiration...</div>
+                <div id="quoteAuthor" class="quote-author"></div>
+            </div>
+            <button class="button" onclick="fetchQuote()">
+                NEW QUOTE
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function updateDate() {
+            const date = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('currentDate').textContent = date.toLocaleDateString('en-US', options).toUpperCase();
+        }
+
+        let breathingTimer;
+        let progressTimer;
+
+        function startBreathing(seconds) {
+            if (breathingTimer) clearInterval(breathingTimer);
+            if (progressTimer) clearInterval(progressTimer);
+
+            const circle = document.getElementById('breathingCircle');
+            const progressFill = document.getElementById('progressFill');
+            const timerDisplay = document.getElementById('timerDisplay');
+            const sessionSummary = document.getElementById('sessionSummary');
+
+            circle.classList.add('breathing-active');
+
+            let timeLeft = seconds;
+            const totalTime = seconds;
+
+            function updateTimer() {
+                const minutes = Math.floor(timeLeft / 60);
+                const secs = timeLeft % 60;
+                timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+
+                const progress = ((totalTime - timeLeft) / totalTime) * 100;
+                progressFill.style.width = `${progress}%`;
+            }
+
+            breathingTimer = setInterval(() => {
+                timeLeft--;
+                updateTimer();
+
+                if (timeLeft <= 0) {
+                    clearInterval(breathingTimer);
+                    circle.classList.remove('breathing-active');
+                    sessionSummary.textContent = 'SESSION COMPLETED';
+                }
+            }, 1000);
+
+            sessionSummary.textContent = 'BREATHE IN... AND OUT...';
+            updateTimer();
+        }
+
+        const quotes = [
+            // Motivation and Success
+            { text: "The only way to do great work is to love what you do.", author: "Steve Jobs" },
+            { text: "Life is what happens when you're busy making other plans.", author: "John Lennon" },
+            { text: "Success is not final, failure is not fatal: it is the courage to continue that counts.", author: "Winston Churchill" },
+            { text: "The future belongs to those who believe in the beauty of their dreams.", author: "Eleanor Roosevelt" },
+            { text: "The only limit to our realization of tomorrow will be our doubts of today.", author: "Franklin D. Roosevelt" },
+            { text: "Do what you can, with what you have, where you are.", author: "Theodore Roosevelt" },
+            { text: "Everything you've ever wanted is on the other side of fear.", author: "George Addair" },
+            { text: "Believe you can and you're halfway there.", author: "Theodore Roosevelt" },
+            { text: "The best way to predict the future is to create it.", author: "Peter Drucker" },
+            { text: "The journey of a thousand miles begins with one step.", author: "Lao Tzu" },
+
+            // Personal Growth and Self-Improvement
+            { text: "The only person you are destined to become is the person you choose to be.", author: "Ralph Waldo Emerson" },
+            { text: "Your life does not get better by chance. It gets better by change.", author: "Jim Rohn" },
+            { text: "Growth is painful. Change is painful. But nothing is as painful as staying stuck somewhere you don't belong.", author: "Naomi Judd" },
+            { text: "The biggest adventure you can ever take is to live the life of your dreams.", author: "Oprah Winfrey" },
+            { text: "Don't watch the clock; do what it does. Keep going.", author: "Sam Levenson" },
+            { text: "Act as if what you do makes a difference. It does.", author: "William James" },
+            { text: "Success is walking from failure to failure with no loss of enthusiasm.", author: "Winston Churchill" },
+
+            // Resilience and Overcoming Challenges
+            { text: "Strength does not come from winning. Your struggles develop your strengths.", author: "Arnold Schwarzenegger" },
+            { text: "Fall seven times, stand up eight.", author: "Japanese Proverb" },
+            { text: "The human capacity for burden is like bamboo - far more flexible than you'd ever believe.", author: "Jodi Picoult" },
+            { text: "Hardships often prepare ordinary people for an extraordinary destiny.", author: "C.S. Lewis" },
+            { text: "When everything seems to be going against you, remember that the airplane takes off against the wind, not with it.", author: "Henry Ford" },
+            { text: "It always seems impossible until it’s done.", author: "Nelson Mandela" },
+
+            // Wisdom and Perspective
+            { text: "Not everything that can be counted counts, and not everything that counts can be counted.", author: "Albert Einstein" },
+            { text: "Life isn't about finding yourself. Life is about creating yourself.", author: "George Bernard Shaw" },
+            { text: "The best time to plant a tree was 20 years ago. The second-best time is now.", author: "Chinese Proverb" },
+            { text: "In the middle of difficulty lies opportunity.", author: "Albert Einstein" },
+            { text: "What lies behind us and what lies before us are tiny matters compared to what lies within us.", author: "Ralph Waldo Emerson" },
+            { text: "Be not afraid of life. Believe that life is worth living, and your belief will help create the fact.", author: "William James" },
+
+            // Courage and Confidence
+            { text: "Courage is not the absence of fear, but the triumph over it.", author: "Nelson Mandela" },
+            { text: "Believe in yourself and all that you are. Know that there is something inside you that is greater than any obstacle.", author: "Christian D. Larson" },
+            { text: "Your value doesn't decrease based on someone's inability to see your worth.", author: "Unknown" },
+            { text: "I have learned over the years that when one's mind is made up, this diminishes fear.", author: "Rosa Parks" },
+            { text: "Don't be afraid to give up the good to go for the great.", author: "John D. Rockefeller" },
+            { text: "Keep your face always toward the sunshine—and shadows will fall behind you.", author: "Walt Whitman" },
+
+            // Kindness and Humanity
+            { text: "No act of kindness, no matter how small, is ever wasted.", author: "Aesop" },
+            { text: "We rise by lifting others.", author: "Robert Ingersoll" },
+            { text: "The purpose of our lives is to be happy and to help others.", author: "Dalai Lama" },
+            { text: "What you do makes a difference, and you have to decide what kind of difference you want to make.", author: "Jane Goodall" },
+            { text: "Happiness is not something ready-made. It comes from your own actions.", author: "Dalai Lama" },
+
+            // Success and Potential
+            { text: "Success is not how high you have climbed, but how you make a positive difference to the world.", author: "Roy T. Bennett" },
+            { text: "Your potential is the sum of all the possibilities God has for your life.", author: "Joel Osteen" },
+            { text: "Don't be pushed around by the fears in your mind. Be led by the dreams in your heart.", author: "Roy T. Bennett" },
+            { text: "The future depends on what you do today.", author: "Mahatma Gandhi" },
+            { text: "In the end, we only regret the chances we didn’t take.", author: "Lewis Carroll" },
+
+            // Learning and Curiosity
+            { text: "Live as if you were to die tomorrow. Learn as if you were to live forever.", author: "Mahatma Gandhi" },
+            { text: "The capacity to learn is a gift; the ability to learn is a skill; the willingness to learn is a choice.", author: "Brian Herbert" },
+            { text: "Curiosity is the engine of achievement.", author: "Ken Robinson" },
+            { text: "Once you stop learning, you start dying.", author: "Albert Einstein" },
+            { text: "The beautiful thing about learning is that no one can take it away from you.", author: "B.B. King" },
+
+            // Passion and Purpose
+            { text: "Don't ask what the world needs. Ask what makes you come alive, and go do it.", author: "Howard Thurman" },
+            { text: "Your passion is waiting for your courage to catch up.", author: "Isabelle Lafleche" },
+            { text: "The meaning of life is to find your gift. The purpose of life is to give it away.", author: "Pablo Picasso" },
+            { text: "Find what you love and let it kill you.", author: "Charles Bukowski" },
+            { text: "The two most important days in your life are the day you are born and the day you find out why.", author: "Mark Twain" },
+
+            // Additional and Miscellaneous Quotes
+            { text: "Don't be pushed around by the fears in your mind. Be led by the dreams in your heart.", author: "Roy T. Bennett" },
+            { text: "The only person you are destined to become is the person you decide to be.", author: "Ralph Waldo Emerson" },
+            { text: "Don’t wait. The time will never be just right.", author: "Napoleon Hill" },
+            { text: "The harder you work for something, the greater you’ll feel when you achieve it.", author: "Unknown" },
+            { text: "Dream big and dare to fail.", author: "Norman Vaughan" },
+            { text: "If you want to fly, you have to give up the things that weigh you down.", author: "Toni Morrison" },
+            { text: "It is never too late to be what you might have been.", author: "George Eliot" },
+            { text: "Your only limit is your mind.", author: "Unknown" },
+            { text: "Whatever you are, be a good one.", author: "Abraham Lincoln" },
+            { text: "Success is how high you bounce when you hit bottom.", author: "George S. Patton" },
+            { text: "Don’t limit your challenges. Challenge your limits.", author: "Unknown" },
+            { text: "Life has no limitations, except the ones you make.", author: "Les Brown" },
+            { text: "A year from now you may wish you had started today.", author: "Karen Lamb" },
+            { text: "You don’t have to be great to start, but you have to start to be great.", author: "Zig Ziglar" },
+            { text: "The way to get started is to quit talking and begin doing.", author: "Walt Disney" },
+            { text: "Success usually comes to those who are too busy to be looking for it.", author: "Henry David Thoreau" },
+            { text: "If you are not willing to risk the usual, you will have to settle for the ordinary.", author: "Jim Rohn" },
+            { text: "Only those who dare to fail greatly can ever achieve greatly.", author: "Robert F. Kennedy" },
+            { text: "Don’t be afraid to give up the good to go for the great.", author: "John D. Rockefeller" },
+            { text: "Opportunities don’t happen. You create them.", author: "Chris Grosser" },
+            { text: "Try not to become a person of success, but rather try to become a person of value.", author: "Albert Einstein" },
+            { text: "The only place where success comes before work is in the dictionary.", author: "Vidal Sassoon" },
+            { text: "It’s not whether you get knocked down, it’s whether you get up.", author: "Vince Lombardi" },
+            { text: "The successful warrior is the average man, with laser-like focus.", author: "Bruce Lee" }
+        ];
+
+        let lastQuoteIndex = -1;
+
+        function fetchQuote() {
+            const quoteText = document.getElementById('quoteText');
+            const quoteAuthor = document.getElementById('quoteAuthor');
+
+            let randomIndex;
+            do {
+                randomIndex = Math.floor(Math.random() * quotes.length);
+            } while (randomIndex === lastQuoteIndex);
+
+            lastQuoteIndex = randomIndex;
+
+            quoteText.textContent = quotes[randomIndex].text;
+            quoteAuthor.textContent = quotes[randomIndex].author.toUpperCase();
+        }
+
+        let voices = [];
+
+        function loadVoices() {
+            voices = window.speechSynthesis.getVoices();
+        }
+
+        // Load voices when available
+        window.speechSynthesis.onvoiceschanged = loadVoices;
+
+        function playAffirmation() {
+            const text = document.getElementById('affirmationText').innerText;
+            const speech = new SpeechSynthesisUtterance(text);
+
+            // Set an ear-pleasing female voice if available
+            speech.voice = voices.find(voice => voice.name.includes('Female') && voice.lang.includes('en')) || voices[0];
+            speech.rate = 1;  // Adjust rate for calm reading
+            speech.pitch = 1; // Adjust pitch as needed
+
+            window.speechSynthesis.speak(speech);
+        }
+        // Add this new function for creating the completion sound
+        function playCompletionSound() {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+            // Create oscillator for a gentle bell-like sound
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            // Configure sound
+            oscillator.type = 'sine';
+            oscillator.frequency.setValueAtTime(784, audioContext.currentTime); // G5 note
+
+            // Configure volume envelope
+            gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+            gainNode.gain.linearRampToValueAtTime(0.3, audioContext.currentTime + 0.1);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 2);
+
+            // Play sound
+            oscillator.start();
+            oscillator.stop(audioContext.currentTime + 2);
+        }
+
+        // Modify the startBreathing function to include the sound
+        function startBreathing(seconds) {
+            if (breathingTimer) clearInterval(breathingTimer);
+            if (progressTimer) clearInterval(progressTimer);
+
+            const circle = document.getElementById('breathingCircle');
+            const progressFill = document.getElementById('progressFill');
+            const timerDisplay = document.getElementById('timerDisplay');
+            const sessionSummary = document.getElementById('sessionSummary');
+
+            circle.classList.add('breathing-active');
+
+            let timeLeft = seconds;
+            const totalTime = seconds;
+
+            function updateTimer() {
+                const minutes = Math.floor(timeLeft / 60);
+                const secs = timeLeft % 60;
+                timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+
+                const progress = ((totalTime - timeLeft) / totalTime) * 100;
+                progressFill.style.width = `${progress}%`;
+            }
+
+            breathingTimer = setInterval(() => {
+                timeLeft--;
+                updateTimer();
+
+                if (timeLeft <= 0) {
+                    clearInterval(breathingTimer);
+                    circle.classList.remove('breathing-active');
+                    sessionSummary.textContent = 'SESSION COMPLETED';
+                    playCompletionSound(); // Play the completion sound
+                }
+            }, 1000);
+
+            sessionSummary.textContent = 'BREATHE IN... AND OUT...';
+            updateTimer();
+        }
+
+        // Initialize page
+        updateDate();
+        fetchQuote();
+    </script>
+</body>
+</html>
